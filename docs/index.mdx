@@ -1,0 +1,37 @@
+---
+title: "Introduction"
+description: "Welcome to the Project Key documentation!"
+---
+
+## What is Project Key?
+
+Project Key is a **universal authentication orchestrator** for developers and QA engineers.
+
+It eliminates the friction of environment setup, login flows, and OTP handling in end-to-end automation by providing a secure, framework-agnostic way to inject authenticated sessions across local, staging, and production environments.
+
+## The problem
+
+Modern test automation is blocked by authentication and every framework requires the same painful setup steps:
+
+1. Launch browser
+2. Handle OAuth redirects
+3. Retrieve OTPs or 2FA codes
+4. Store environment-specific credentials
+5. Retry when cookies expire
+
+This process is **time-consuming, brittle, and not reusable** across projects. Most teams either:
+
+- Stub login (breaking parity with production)
+- Use manual cookies/tokens (unsafe and short-lived)
+
+## Our solution
+
+Project Key provides a single command and API to handle authentication setup for any E2E test runner.
+It automatically:
+
+- Performs secure login flows (OAuth, token, or cookie-based)
+- Refreshes tokens or sessions before expiry
+- Stores and encrypts session data
+- Injects authentication state into test frameworks at runtime
+
+It's **framework-agnostic**, **environment-aware**, and **production-safe**.

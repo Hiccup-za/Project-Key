@@ -1,0 +1,559 @@
+---
+title: "MVP"
+---
+
+## 🔍 Scope
+
+### Goal:
+
+Deliver a minimal, working system that can:
+
+1. Log into GitHub via OAuth to obtain browser cookies
+2. Store an encrypted session locally or in CI
+3. Inject that session into Playwright and Cypress
+
+### Included Features
+
+| Feature              | Description                                          |
+| -------------------- | ---------------------------------------------------- |
+| CLI                  | `projectkey login`, `projectkey export`, `projectkey restore` |
+| GitHub Auth Provider | Supports OAuth App flow for browser-based authentication |
+| Local Encryption     | Secure `.auth/session.json`                          |
+| Playwright Export    | `storageState` JSON generator                        |
+| Cypress Export       | Custom command + cookie injector                     |
+| CI/CD Mode           | Non-interactive login with stored credentials        |
+| Config File          | `projectkey.config.json` with provider + env settings   |
+
+### CLI Commands (MVP)
+
+| Command                           | Description                 |
+| --------------------------------- | --------------------------- |
+| `projectkey init`                    | Creates base config file    |
+| `projectkey login <provider>`        | Logs in and stores session  |
+| `projectkey export --framework=<fw>` | Outputs framework session   |
+| `projectkey restore`                 | Restores session in CI mode |
+| `projectkey logout`                  | Deletes stored session      |
+
+### MVP File Structure
+
+```
+.projectkey/
+├── config.json
+├── session.enc.json
+└── keys/
+    └── local.key
+```
+
+### Playwright Example
+
+```ts
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  storageState: '.projectkey/session.json',
+});
+```
+
+### Cypress Example
+
+```js
+beforeEach(() => {
+  cy.projectKeyLogin('github'); // calls local Project Key instance
+});
+```
+
+### MVP Flow
+
+The MVP flow follows these steps:
+
+1. **CI/CD Runner** executes `projectkey login github --ci`
+2. **Project Key CLI** initiates authentication via the GitHub AuthProvider
+3. **AuthProvider** performs OAuth flow to obtain browser cookies
+4. **Encrypted Session** is stored securely
+5. **Framework Export** generates `storageState.json` via `projectkey export --framework=playwright`
+6. **Test Runner** uses the pre-authenticated session
+
+### Architecture Diagram (MVP Flow)
+
+```
+CI/CD Runner
+     │
+     │ 1️⃣ projectkey login github --ci
+     ▼
+Project Key CLI
+     │
+     ├─> AuthProvider (GitHub)
+     │      ↳ OAuth flow to obtain browser cookies
+     │
+     └─> Encrypted Session Stored
+     │
+     ▼
+projectkey export --framework=playwright
+     │
+     └─> Writes storageState.json
+     │
+     ▼
+Playwright Test Runner
+     │
+     └─> Uses pre-authenticated session
+```
+
+## 🔧 Adapter Implementation
+
+Project Key uses a two-layer adapter architecture to achieve framework-agnostic authentication orchestration:
+
+1. **Auth Provider Adapters** - Handle authentication flows with external services (GitHub, Google, etc.)
+2. **Framework Integration Adapters** - Inject authenticated sessions into test frameworks (Playwright, Cypress, etc.)
+
+### Auth Provider Adapters
+
+Auth Provider Adapters are responsible for obtaining valid authentication sessions or tokens from external identity providers.
+
+#### Core Interface
+
+```ts
+interface AuthSession {
+  provider: string;
+  expiresAt: number;
+  cookies?: Cookie[];
+  tokens?: {
+    accessToken?: string;
+    refreshToken?: string;
+    idToken?: string;
+  };
+  metadata?: Record<string, unknown>;
+}
+
+interface AuthProvider {
+  name: string;
+  login(options?: LoginOptions): Promise<AuthSession>;
+  refresh?(session: AuthSession): Promise<AuthSession>;
+  validate?(session: AuthSession): Promise<boolean>;
+}
+```
+
+#### Step-by-Step Implementation
+
+**Step 1: Provider Registration**
+
+Providers are registered in the core orchestrator via a provider registry pattern:
+
+```ts
+// Core orchestrator maintains provider registry
+class ProviderRegistry {
+  private providers: Map<string, AuthProvider> = new Map();
+
+  register(provider: AuthProvider): void {
+    this.providers.set(provider.name, provider);
+  }
+
+  get(name: string): AuthProvider | undefined {
+    return this.providers.get(name);
+  }
+}
+```
+
+**Step 2: Provider Configuration**
+
+Each provider reads configuration from `projectkey.config.json`:
+
+```json
+{
+  "providers": {
+    "github": {
+      "type": "oauth",
+      "clientId": "${GITHUB_CLIENT_ID}",
+      "clientSecret": "${GITHUB_CLIENT_SECRET}",
+      "scopes": ["user:email", "repo"],
+      "redirectUri": "http://localhost:3000/callback"
+    }
+  },
+  "environments": {
+    "production": {
+      "github": {
+        "clientId": "${PROD_GITHUB_CLIENT_ID}"
+      }
+    }
+  }
+}
+```
+
+**Step 3: Login Flow Execution**
+
+When `projectkey login github` is executed:
+
+1. **Load Configuration** - Core orchestrator reads provider config from `projectkey.config.json`
+2. **Initialize Provider** - Create provider instance with loaded configuration
+3. **Execute Login** - Call provider's `login()` method:
+   - **OAuth Flow**: Launch browser, handle redirects, capture authorization code, extract cookies
+   - **Cookie Replay**: Load cookies from provided source
+   - **Note**: PATs are for API authentication only and cannot be used for browser-based E2E testing
+4. **Normalize Session** - Convert provider-specific response to standardized `AuthSession`
+5. **Validate Session** - Optional `validate()` call to verify session is active
+6. **Store Session** - Encrypt and persist to `.projectkey/session.enc.json`
+
+**Step 4: GitHub Provider Example (MVP)**
+
+> **Important**: For browser-based E2E testing (Playwright, Cypress), GitHub PATs are **not viable** because:
+> - PATs authenticate API requests only (`Authorization: token <PAT>`)
+> - Browser sessions require cookies, which PATs cannot provide
+> - OAuth flow is required to obtain browser cookies for E2E testing
+
+```ts
+class GitHubProvider implements AuthProvider {
+  name = "github";
+  private config: GitHubConfig;
+
+  constructor(config: GitHubConfig) {
+    this.config = config;
+  }
+
+  async login(options?: LoginOptions): Promise<AuthSession> {
+    // For E2E browser testing, OAuth flow is required to get cookies
+    // PATs cannot be used for browser-based authentication
+    return this.loginWithOAuth();
+  }
+
+  private async loginWithOAuth(): Promise<AuthSession> {
+    // Launch browser for OAuth flow
+    const browser = await playwright.chromium.launch();
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    // Navigate to GitHub OAuth authorization page
+    const authUrl = `https://github.com/login/oauth/authorize?client_id=${this.config.clientId}&scope=${this.config.scopes.join(" ")}&redirect_uri=${this.config.redirectUri}`;
+    await page.goto(authUrl);
+
+    // Wait for callback or user interaction
+    await page.waitForURL("**/callback**", { timeout: 300000 });
+
+    // Extract cookies and tokens from the authenticated session
+    const cookies = await context.cookies();
+    const url = page.url();
+    const code = new URL(url).searchParams.get("code");
+
+    // Exchange code for token (if needed)
+    const token = await this.exchangeCodeForToken(code!);
+
+    await browser.close();
+
+    return {
+      provider: "github",
+      expiresAt: Date.now() + 8 * 60 * 60 * 1000, // 8 hours
+      cookies: cookies.map(c => ({
+        name: c.name,
+        value: c.value,
+        domain: c.domain,
+        path: c.path,
+        expires: c.expires,
+        httpOnly: c.httpOnly,
+        secure: c.secure,
+        sameSite: c.sameSite
+      })),
+      tokens: {
+        accessToken: token
+      }
+    };
+  }
+
+  async refresh(session: AuthSession): Promise<AuthSession> {
+    // If session is expired or cookies are invalid, re-authenticate via OAuth
+    // GitHub OAuth sessions can be refreshed by re-running the OAuth flow
+    // or by using stored cookies if still valid
+    if (session.expiresAt > Date.now()) {
+      return session; // Session still valid
+    }
+
+    // Session expired, need to re-authenticate
+    return this.loginWithOAuth();
+  }
+
+  async validate(session: AuthSession): Promise<boolean> {
+    try {
+      // Check if session has expired
+      if (session.expiresAt < Date.now()) {
+        return false;
+      }
+
+      // For browser-based E2E testing, validate cookies by checking session
+      // If cookies are present and not expired, session is valid
+      if (session.cookies && session.cookies.length > 0) {
+        // Check if any critical cookies are present (e.g., session cookies)
+        const hasValidCookies = session.cookies.some(c => 
+          c.expires === undefined || c.expires > Date.now() / 1000
+        );
+        return hasValidCookies;
+      }
+
+      return false;
+    } catch {
+      return false;
+    }
+  }
+}
+```
+
+**Step 5: Session Normalization**
+
+The core orchestrator normalizes provider-specific responses into the standard `AuthSession` format:
+
+```ts
+class SessionNormalizer {
+  normalize(provider: string, rawSession: unknown): AuthSession {
+    // Convert provider-specific format to AuthSession
+    // Handle different provider response structures
+    // Ensure all required fields are present
+    // Calculate expiration times
+  }
+}
+```
+
+### Framework Integration Adapters
+
+Framework Integration Adapters convert standardized `AuthSession` objects into framework-specific formats for injection.
+
+#### Core Interface
+
+```ts
+interface FrameworkAdapter {
+  name: string;
+  export(session: AuthSession, options?: ExportOptions): Promise<string>;
+  inject(session: AuthSession, context: FrameworkContext): Promise<void>;
+}
+```
+
+#### Step-by-Step Implementation
+
+**Step 1: Playwright Adapter**
+
+```ts
+class PlaywrightAdapter implements FrameworkAdapter {
+  name = "playwright";
+
+  async export(session: AuthSession, options?: ExportOptions): Promise<string> {
+    const storageState: PlaywrightStorageState = {
+      cookies: session.cookies || [],
+      origins: []
+    };
+
+    // Add localStorage if available in session metadata
+    if (session.metadata?.localStorage) {
+      storageState.origins.push({
+        origin: session.metadata.origin || "https://github.com",
+        localStorage: session.metadata.localStorage
+      });
+    }
+
+    const outputPath = options?.outputPath || ".projectkey/storageState.json";
+    await fs.writeFile(outputPath, JSON.stringify(storageState, null, 2));
+
+    return outputPath;
+  }
+
+  async inject(session: AuthSession, context: FrameworkContext): Promise<void> {
+    // This is called at runtime when tests execute
+    const playwrightContext = context as BrowserContext;
+
+    // Add cookies
+    if (session.cookies) {
+      await playwrightContext.addCookies(session.cookies.map(c => ({
+        name: c.name,
+        value: c.value,
+        domain: c.domain,
+        path: c.path,
+        expires: c.expires,
+        httpOnly: c.httpOnly,
+        secure: c.secure,
+        sameSite: c.sameSite as "Strict" | "Lax" | "None"
+      })));
+    }
+
+    // Set localStorage if available
+    if (session.metadata?.localStorage) {
+      const page = await playwrightContext.newPage();
+      await page.addInitScript((localStorage) => {
+        Object.entries(localStorage).forEach(([key, value]) => {
+          window.localStorage.setItem(key, value);
+        });
+      }, session.metadata.localStorage);
+    }
+  }
+}
+```
+
+**Step 2: Cypress Adapter**
+
+```ts
+class CypressAdapter implements FrameworkAdapter {
+  name = "cypress";
+
+  async export(session: AuthSession, options?: ExportOptions): Promise<string> {
+    // Generate Cypress custom command file
+    const commandCode = `
+Cypress.Commands.add('projectKeyLogin', (provider = 'github') => {
+  cy.then(() => {
+    // Load session from Project Key
+    const session = require('@projectkey/core').getAuthSession(provider);
+    
+    // Set cookies
+    ${session.cookies?.map(c => 
+      `cy.setCookie('${c.name}', '${c.value}', { domain: '${c.domain}', path: '${c.path}' });`
+    ).join('\n    ') || ''}
+    
+    // Set localStorage
+    ${session.metadata?.localStorage ? 
+      `Object.entries(${JSON.stringify(session.metadata.localStorage)}).forEach(([key, value]) => {
+      cy.window().then(win => win.localStorage.setItem(key, value));
+    });` : ''}
+  });
+});
+`;
+
+    const outputPath = options?.outputPath || "cypress/support/projectkey.js";
+    await fs.writeFile(outputPath, commandCode);
+
+    return outputPath;
+  }
+
+  async inject(session: AuthSession, context: FrameworkContext): Promise<void> {
+    // Runtime injection for Cypress
+    // This would be called via the custom command
+    const cypressContext = context as Cypress.Chainable;
+
+    // Cookies are set via cy.setCookie()
+    // localStorage is set via cy.window().then()
+  }
+}
+```
+
+**Step 3: Adapter Registry**
+
+```ts
+class FrameworkAdapterRegistry {
+  private adapters: Map<string, FrameworkAdapter> = new Map();
+
+  register(adapter: FrameworkAdapter): void {
+    this.adapters.set(adapter.name, adapter);
+  }
+
+  get(name: string): FrameworkAdapter {
+    const adapter = this.adapters.get(name);
+    if (!adapter) {
+      throw new Error(`Framework adapter '${name}' not found`);
+    }
+    return adapter;
+  }
+
+  async export(session: AuthSession, framework: string, options?: ExportOptions): Promise<string> {
+    const adapter = this.get(framework);
+    return adapter.export(session, options);
+  }
+}
+```
+
+**Step 4: Export Flow**
+
+When `projectkey export --framework=playwright` is executed:
+
+1. **Load Session** - Decrypt and load session from `.projectkey/session.enc.json`
+2. **Validate Session** - Check expiration, optionally call provider's `validate()` method
+3. **Refresh if Needed** - If expired and refresh available, call `refresh()`
+4. **Get Framework Adapter** - Retrieve adapter from registry
+5. **Export Session** - Call adapter's `export()` method
+6. **Write Output** - Framework-specific file is written (e.g., `storageState.json` for Playwright)
+
+### Error Handling
+
+Both adapter types implement consistent error handling:
+
+```ts
+class AdapterError extends Error {
+  constructor(
+    message: string,
+    public adapter: string,
+    public code: string,
+    public cause?: Error
+  ) {
+    super(message);
+    this.name = "AdapterError";
+  }
+}
+
+// Provider errors
+class ProviderLoginError extends AdapterError {
+  constructor(provider: string, cause?: Error) {
+    super(
+      `Failed to login with ${provider}`,
+      provider,
+      "LOGIN_FAILED",
+      cause
+    );
+  }
+}
+
+// Framework adapter errors
+class FrameworkExportError extends AdapterError {
+  constructor(framework: string, cause?: Error) {
+    super(
+      `Failed to export session for ${framework}`,
+      framework,
+      "EXPORT_FAILED",
+      cause
+    );
+  }
+}
+```
+
+### Adapter Lifecycle
+
+```
+┌─────────────────────┐
+│  CLI Command        │
+│  (login/export)     │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Core Orchestrator  │
+│  - Load Config      │
+│  - Load Session     │
+│  - Validate         │
+└──────────┬──────────┘
+           │
+           ├─────────────────┐
+           │                 │
+           ▼                 ▼
+┌──────────────────┐  ┌──────────────────┐
+│ Auth Provider    │  │ Framework        │
+│ Adapter          │  │ Adapter          │
+│ - login()        │  │ - export()       │
+│ - refresh()      │  │ - inject()       │
+│ - validate()     │  │                  │
+└────────┬─────────┘  └────────┬─────────┘
+         │                     │
+         ▼                     ▼
+┌──────────────────┐  ┌──────────────────┐
+│ External Auth    │  │ Framework        │
+│ Service          │  │ Session File     │
+│ (GitHub API)     │  │ (storageState)   │
+└──────────────────┘  └──────────────────┘
+```
+
+## 🧩 Post-MVP Roadmap
+
+| Phase | Feature                 | Description                              |
+| ----- | ----------------------- | ---------------------------------------- |
+| v1.1  | Google Provider         | Add Google OAuth                         |
+| v1.2  | Email OTP Integration   | Add support for Mailosaur / MailPit      |
+| v1.3  | Session Refresh Service | CLI daemon or background worker          |
+| v1.4  | Project Key Dashboard   | Web view for managing providers/sessions |
+| v2.0  | Cloud Mode              | Centralized orchestration service        |
+
+## 🧭 Success Metrics
+
+| Metric               | Definition                                      |
+| -------------------- | ----------------------------------------------- |
+| Setup time reduction | `80%` less setup time for new test environments |
+| Reliability          | `<2%` flaky login tests in production           |
+| Framework support    | Playwright + Cypress by v1.0                    |
+| Adoption             | 100+ stars on GitHub in first 3 months          |

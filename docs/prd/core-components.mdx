@@ -1,0 +1,91 @@
+---
+title: "Core Components"
+---
+
+## 🏗️ System Architecture Overview
+
+### High-Level Diagram
+
+```
+        ┌─────────────────────┐
+        │   Test Framework    │
+        │ (Playwright/Cypress)│
+        └──────────┬──────────┘
+                   │
+         Inject Session (Cookies, Tokens)
+                   │
+        ┌──────────▼──────────┐
+        │     Project Key Core    │
+        │   (CLI + SDK API)   │
+        ├──────────┬──────────┤
+        │   Providers Layer   │
+        │ (GitHub, Google...) │
+        └──────────┬──────────┘
+                   │
+        ┌──────────▼──────────┐
+        │ Auth Provider APIs  │
+        │ (OAuth, Email, M2M) │
+        └─────────────────────┘
+```
+
+## 🔌 Auth Providers Layer (Adapters)
+
+Responsible for obtaining valid sessions/tokens.
+
+### Example Providers
+
+* GitHub OAuth (OAuth App flow for browser-based authentication)
+* Google Sign-In
+* Custom backend token login
+* Email OTP (future)
+* Cookie replay
+
+### Interface
+
+```ts
+interface AuthProvider {
+  name: string;
+  login(): Promise<AuthSession>;
+  refresh?(session: AuthSession): Promise<AuthSession>;
+}
+```
+
+## 🫀 Core Orchestrator
+
+Handles configuration, session lifecycle, and session export.
+
+### Responsibilities
+
+* Reads from `projectkey.config.json`
+* Executes provider `login()` or `refresh()`
+* Normalizes session data
+* Stores encrypted `.auth/session.json`
+* Exposes CLI + Node API
+
+```ts
+import { getAuthSession } from "@projectkey/core";
+const session = await getAuthSession("github");
+```
+
+## 📦 Session Storage Layer
+
+Securely persists and retrieves session data.
+
+| Storage Mode    | Description                                   |
+| --------------- | --------------------------------------------- |
+| Local (default) | Encrypted JSON file (`.auth/session.json`)    |
+| CI/CD           | Ephemeral cache or GitHub Secret              |
+| Cloud (future)  | Hosted session manager with token refresh API |
+
+**Encryption:** AES-256 with CI passphrase or local keychain.
+
+## ⚙️ Framework Integrations
+
+Adapters for injecting sessions into test runners.
+
+| Framework  | Method                                           |
+| ---------- | ------------------------------------------------ |
+| Playwright | Uses `storageState` file                         |
+| Cypress    | Uses `cy.setCookie()` and localStorage injection |
+| Puppeteer  | Uses `page.setCookie()`                          |
+| Selenium   | Uses WebDriver cookie APIs                       |
