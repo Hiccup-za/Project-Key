@@ -27,7 +27,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <header style={{ padding: '1.5rem 0', position: 'sticky', top: 0, background: 'rgba(10, 10, 10, 0.8)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', zIndex: 10 }}>
-        <nav aria-label="Main navigation" className="responsive-nav" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <nav aria-label="Main navigation" className="responsive-nav" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
           <div style={{ fontSize: '1.25rem', fontWeight: '500', letterSpacing: '-0.02em' }}>🔑 Project Key</div>
           <div style={{ display: 'flex', gap: '2.5rem', fontSize: '0.9rem' }}>
             {/* <a href="#docs">Docs</a>
@@ -36,9 +36,9 @@ export default function Home() {
         </nav>
       </header>
 
-      <section className="responsive-padding" style={{ padding: '4rem 0', maxWidth: '1200px', margin: '0 auto', paddingLeft: '2rem', paddingRight: '2rem' }}>
+      <section className="responsive-padding" style={{ padding: '4rem 0', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center' }}>
-          <h1 className="responsive-title" style={{ fontSize: '3.5rem', fontWeight: '700', lineHeight: '1.1', marginBottom: '1.5rem', letterSpacing: '-0.04em' }}>
+          <h1 className="responsive-title" style={{ fontWeight: '700', lineHeight: '1.1', marginBottom: '1.5rem', letterSpacing: '-0.04em' }}>
             One <span style={{ color: 'rgb(226 181 34)' }}>Key</span> to rule them all
           </h1>
           <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: '1.8', maxWidth: '600px', margin: '0 auto 2rem' }}>
@@ -62,14 +62,14 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="responsive-padding" style={{ padding: '4rem 0', maxWidth: '1200px', margin: '0 auto', paddingLeft: '2rem', paddingRight: '2rem' }}>
-        <h2 style={{ fontSize: '2rem', fontWeight: '600', lineHeight: '1.2', letterSpacing: '-0.02em', marginBottom: '1rem' }}>
+      <section className="responsive-padding" style={{ padding: '4rem 0', maxWidth: '1200px', margin: '0 auto' }}>
+        <h2 style={{ fontWeight: '600', lineHeight: '1.2', letterSpacing: '-0.02em', marginBottom: '1rem' }}>
           Real Authentication, Never Mocked
         </h2>
         <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '3rem' }}>
           Unlike stubs or mocks that break production parity, <span style={{ color: 'rgb(226 181 34)' }}>Project Key</span> uses legitimate authentication flows.
         </p>
-        <div className="responsive-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
+        <div className="responsive-grid-3">
           <div className="feature-block">
             <div className="feature-header">
               <div className="feature-icon" style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🌍</div>
@@ -100,14 +100,14 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="responsive-padding" style={{ padding: '4rem 0', maxWidth: '1200px', margin: '0 auto', paddingLeft: '2rem', paddingRight: '2rem' }}>
-        <h2 style={{ fontSize: '2rem', fontWeight: '600', lineHeight: '1.2', letterSpacing: '-0.02em', marginBottom: '1rem' }}>
+      <section className="responsive-padding" style={{ padding: '4rem 0', maxWidth: '1200px', margin: '0 auto' }}>
+        <h2 style={{ fontWeight: '600', lineHeight: '1.2', letterSpacing: '-0.02em', marginBottom: '1rem' }}>
           One Setup, Every Environment
         </h2>
         <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '2rem' }}>
           <span style={{ color: 'rgb(226 181 34)' }}>Project Key</span> handles OAuth flows, token management, and session persistence so you can focus on writing tests.
         </p>
-        <div className="responsive-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        <div className="responsive-grid-2">
           <div style={{ padding: '1.25rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '8px' }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text)', fontFamily: 'monospace', lineHeight: '1.7' }}>
               <div style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }}># Authenticates and stores session</div>
@@ -131,7 +131,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="responsive-padding" style={{ padding: '1.5rem 0', maxWidth: '1200px', margin: '0 auto', paddingLeft: '2rem', paddingRight: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+      <footer className="responsive-padding" style={{ padding: '1.5rem 0', maxWidth: '1200px', margin: '0 auto', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
         <p>© 2025 Project Key. All rights reserved.</p>
       </footer>
     </main>
