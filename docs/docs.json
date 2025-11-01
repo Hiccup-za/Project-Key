@@ -1,0 +1,130 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Project Key",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#6366F1",
+    "light": "#818CF8",
+    "dark": "#4F46E5",
+    "anchors": {
+      "from": "#6366F1",
+      "to": "#818CF8"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/Hiccup-za/Project-Key"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "/getting-started"
+  },
+  "anchors": [
+    {
+      "name": "Documentation",
+      "icon": "book-open-cover",
+      "url": "https://mintlify.com/docs"
+    },
+    {
+      "name": "Community",
+      "icon": "slack",
+      "url": "https://mintlify.com/community"
+    }
+  ],
+  "tabs": [
+    {
+      "name": "CLI",
+      "url": "api-reference/cli"
+    },
+    {
+      "name": "SDK",
+      "url": "api-reference/sdk"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "getting-started",
+        "installation",
+        "quickstart"
+      ]
+    },
+    {
+      "group": "Guides",
+      "pages": [
+        "guides/configuration",
+        "guides/authentication",
+        "guides/session-management",
+        "guides/security"
+      ]
+    },
+    {
+      "group": "Framework Integrations",
+      "pages": [
+        "frameworks/playwright",
+        "frameworks/cypress",
+        "frameworks/puppeteer",
+        "frameworks/selenium"
+      ]
+    },
+    {
+      "group": "Auth Providers",
+      "pages": [
+        "providers/github",
+        "providers/google",
+        "providers/custom-provider"
+      ]
+    },
+    {
+      "group": "CLI Reference",
+      "pages": [
+        "cli/init",
+        "cli/login",
+        "cli/export",
+        "cli/restore",
+        "cli/logout"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api-reference/introduction",
+        {
+          "group": "Core",
+          "pages": [
+            "api-reference/core/get-auth-session",
+            "api-reference/core/export-session",
+            "api-reference/core/refresh-session"
+          ]
+        },
+        {
+          "group": "Providers",
+          "pages": [
+            "api-reference/providers/github-provider",
+            "api-reference/providers/create-provider"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Examples",
+      "pages": [
+        "examples/playwright-example",
+        "examples/cypress-example",
+        "examples/ci-cd-setup"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/Hiccup-za/Project-Key",
+    "twitter": "https://twitter.com"
+  }
+}
+
