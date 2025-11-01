@@ -1,0 +1,82 @@
+---
+title: "Getting started"
+description: "How to get up and running."
+---
+
+## Installation
+
+Install Project Key globally:
+
+```bash
+npm install -g projectkey
+```
+
+Or use it directly with `npx` without installing:
+
+```bash
+npx projectkey <command>
+```
+
+## Quick Start
+
+### 1. Initialize Project Key
+
+Create a configuration file in your project:
+
+```bash
+projectkey init
+```
+
+This creates a `projectkey.config.json` file with provider and environment settings.
+
+### 2. Log in
+
+Authenticate with a supported provider (e.g., GitHub):
+
+```bash
+projectkey login github
+```
+
+Project Key will handle the OAuth flow or token exchange and store an encrypted session locally.
+
+### 3. Export for Your Framework
+
+Generate framework-specific session files:
+
+```bash
+# For Playwright
+projectkey export --framework=playwright
+
+# For Cypress
+projectkey export --framework=cypress
+```
+
+### 4. Use in Your Tests
+
+**Playwright:**
+
+```ts
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  storageState: '.projectkey/session.json',
+});
+```
+
+**Cypress:**
+
+```js
+beforeEach(() => {
+  cy.authkitLogin('github');
+});
+```
+
+## CI/CD Mode
+
+For non-interactive environments, use CI mode:
+
+```bash
+projectkey login github --ci
+```
+
+This uses stored credentials from environment variables or secrets instead of prompting for input.

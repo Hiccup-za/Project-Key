@@ -1,0 +1,10 @@
+---
+title: "Security Model"
+---
+
+## 🎯 Goals
+
+* No plain-text tokens or cookies ever written to disk.
+* Long-term credentials (PATs, OAuth secrets) must be stored externally (Vault, GitHub Secrets).
+* Session data auto-expires and is environment-scoped.
+* Optional audit logs for session creation and usage.
