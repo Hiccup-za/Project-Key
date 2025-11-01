@@ -5,7 +5,7 @@
 }
 
 :root {
-  --bg: #0a0a0a;
+  --bg: rgba(10, 10, 10, 1);
   --text: #e5e5e5;
   --text-secondary: #999;
   --text-muted: #666;

@@ -1,146 +1,112 @@
+'use client';
+
 export default function Home() {
+
   return (
     <main>
-      <header style={{ padding: '2rem 2rem 0', position: 'sticky', top: 0, background: 'var(--bg)', zIndex: 10 }}>
-        <nav style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <header style={{ padding: '1.5rem 0', position: 'sticky', top: 0, background: 'rgba(10, 10, 10, 0.8)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', zIndex: 10 }}>
+        <nav style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ fontSize: '1.25rem', fontWeight: '500', letterSpacing: '-0.02em' }}>🔑 Project Key</div>
           <div style={{ display: 'flex', gap: '2.5rem', fontSize: '0.9rem' }}>
-            <a href="#features">Features</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#docs">Docs</a>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+            {/* <a href="#docs">Docs</a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a> */}
           </div>
         </nav>
       </header>
 
-      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
-        <section style={{ padding: '8rem 0 6rem', maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ fontSize: '3.5rem', fontWeight: '700', lineHeight: '1.1', marginBottom: '4rem', letterSpacing: '-0.04em' }}>
-            One Key to rule them all
-          </div>
-          <p style={{ fontSize: '1.1rem', marginBottom: '4rem', color: 'var(--text-secondary)', lineHeight: '1.8', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }}>
+      <section style={{ padding: '4rem 0', maxWidth: '1200px', margin: '0 auto', paddingLeft: '2rem', paddingRight: '2rem' }}>
+        <div style={{ textAlign: 'center' }}>
+          <h1 style={{ fontSize: '3.5rem', fontWeight: '700', lineHeight: '1.1', marginBottom: '1.5rem', letterSpacing: '-0.04em' }}>
+            One <span style={{ color: 'rgb(226 181 34)' }}>Key</span> to rule them all
+          </h1>
+          <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: '1.8', maxWidth: '600px', margin: '0 auto 2rem' }}>
             Eliminate authentication friction in your end-to-end test automation, across local, staging, and production environments.
           </p>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
             <a 
               href="#get-started" 
               style={{ 
-                padding: '1rem 2.5rem', 
+                padding: '0.75rem 1.5rem', 
                 background: 'var(--accent)', 
                 color: 'var(--bg)', 
                 borderRadius: '6px',
-                display: 'inline-block',
                 fontWeight: '500',
-                fontSize: '1rem'
+                fontSize: '0.95rem'
               }}
             >
-              Get Started
-            </a>
-            <a 
-              href="#docs" 
-              style={{ 
-                padding: '1rem 2.5rem', 
-                border: '1px solid var(--border)', 
-                borderRadius: '6px',
-                display: 'inline-block',
-                fontWeight: '500',
-                fontSize: '1rem'
-              }}
-            >
-              Documentation
+              Coming Soon
             </a>
           </div>
-        </section>
-
-        <section style={{ padding: '6rem 0', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
-            <div>
-              <div style={{ fontSize: '2.5rem', fontWeight: '600', marginBottom: '1.5rem', lineHeight: '1.2', letterSpacing: '-0.02em' }}>
-                Real Authentication, Never Mocked
-              </div>
-              <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: '1.8', marginBottom: '2rem' }}>
-                Always uses legitimate flows or tokens. Never mocked. Sessions are encrypted, short-lived, and environment-scoped.
-              </p>
-            </div>
-            <div style={{ padding: '2.5rem', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)' }}>
-              <div style={{ fontFamily: 'monospace', fontSize: '0.9rem', lineHeight: '1.8' }}>
-                <div style={{ color: 'var(--text-muted)' }}>$ npx projectkey login github</div>
-                <div style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}># Logs in via OAuth or API</div>
-                <div style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>$ npx projectkey export --framework=x</div>
-                <div style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}># Outputs session.json</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="features" style={{ padding: '6rem 0' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4rem' }}>
-            <div>
-              <div style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem', letterSpacing: '-0.01em' }}>
-                Framework Agnostic
-              </div>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: '1.8' }}>
-                Works with any test automation framework. One tool for all your test automation needs.
-              </p>
-            </div>
-            <div>
-              <div style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem', letterSpacing: '-0.01em' }}>
-                Environment Consistency
-              </div>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: '1.8' }}>
-                Identical auth handling locally, in staging, and in production. No more environment-specific hacks.
-              </p>
-            </div>
-            <div>
-              <div style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem', letterSpacing: '-0.01em' }}>
-                Security First
-              </div>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: '1.8' }}>
-                No plain-text tokens or cookies ever written to disk. Sessions auto-expire and are environment-scoped.
-              </p>
-            </div>
-            <div>
-              <div style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem', letterSpacing: '-0.01em' }}>
-                Extensible by Design
-              </div>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: '1.8' }}>
-                Developers can write new AuthProvider plugins easily. Customize authentication flows for your needs.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section style={{ padding: '6rem 0', borderTop: '1px solid var(--border)' }}>
-          <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto' }}>
-            <div style={{ fontSize: '2.5rem', fontWeight: '600', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
-              Ready to get started?
-            </div>
-            <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', marginBottom: '3rem', lineHeight: '1.8' }}>
-              Install Project Key and eliminate authentication friction in your test automation workflow.
-            </p>
-            <a 
-              href="#get-started" 
-              style={{ 
-                padding: '1rem 2.5rem', 
-                background: 'var(--accent)', 
-                color: 'var(--bg)', 
-                borderRadius: '6px',
-                display: 'inline-block',
-                fontWeight: '500',
-                fontSize: '1rem'
-              }}
-            >
-              Get Started
-            </a>
-          </div>
-        </section>
-      </div>
-
-      <footer style={{ padding: '4rem 2rem 3rem', borderTop: '1px solid var(--border)', marginTop: '6rem' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-          <p>© 2025 Project Key. Universal Authentication Orchestrator for Automation Frameworks.</p>
         </div>
+      </section>
+
+      <section style={{ padding: '4rem 0', maxWidth: '1200px', margin: '0 auto', paddingLeft: '2rem', paddingRight: '2rem' }}>
+        <h2 style={{ fontSize: '2rem', fontWeight: '600', lineHeight: '1.2', letterSpacing: '-0.02em', marginBottom: '1rem' }}>
+          Real Authentication, Never Mocked
+        </h2>
+        <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '3rem' }}>
+          Unlike stubs or mocks that break production parity, <span style={{ color: 'rgb(226 181 34)' }}>Project Key</span> uses legitimate authentication flows.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
+          <div>
+            <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🌍</div>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.5rem' }}>Environment-Scoped</h3>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+              Sessions match what users actually experience across local, staging, and production environments.
+            </p>
+          </div>
+          <div>
+            <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🔒</div>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.5rem' }}>Encrypted Sessions</h3>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+              All sessions are encrypted and stored securely, protecting your credentials.
+            </p>
+          </div>
+          <div>
+            <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>⚙️</div>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.5rem' }}>Framework Agnostic</h3>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+              Designed to work with any test framework, keeping your authentication setup flexible across tooling.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section style={{ padding: '4rem 0', maxWidth: '1200px', margin: '0 auto', paddingLeft: '2rem', paddingRight: '2rem' }}>
+        <h2 style={{ fontSize: '2rem', fontWeight: '600', lineHeight: '1.2', letterSpacing: '-0.02em', marginBottom: '1rem' }}>
+          One Setup, Every Environment
+        </h2>
+        <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '2rem' }}>
+          <span style={{ color: 'rgb(226 181 34)' }}>Project Key</span> handles OAuth flows, token management, and session persistence so you can focus on writing tests.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div style={{ padding: '1.25rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '8px' }}>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text)', fontFamily: 'monospace', lineHeight: '1.7' }}>
+              <div style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }}># Authenticates and stores session</div>
+              <div>
+                <span style={{ color: 'var(--text-muted)' }}>$ </span>
+                <span style={{ color: '#ff79c6' }}>npx projectkey</span>
+                <span style={{ color: '#50fa7b' }}> login provider</span>
+              </div>
+            </div>
+          </div>
+          <div style={{ padding: '1.25rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '8px' }}>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text)', fontFamily: 'monospace', lineHeight: '1.7' }}>
+              <div style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }}># Exports session for your test framework</div>
+              <div>
+                <span style={{ color: 'var(--text-muted)' }}>$ </span>
+                <span style={{ color: '#ff79c6' }}>npx projectkey</span>
+                <span style={{ color: '#50fa7b' }}> export framework</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer style={{ padding: '1.5rem 0', maxWidth: '1200px', margin: '0 auto', paddingLeft: '2rem', paddingRight: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+        <p>© 2025 Project Key. All rights reserved.</p>
       </footer>
     </main>
   )
 }
+
