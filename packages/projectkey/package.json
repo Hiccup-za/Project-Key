@@ -1,0 +1,31 @@
+{
+  "name": "projectkey",
+  "version": "0.1.0",
+  "description": "Universal authentication orchestrator for test automation",
+  "main": "index.js",
+  "bin": {
+    "projectkey": "bin/projectkey.js"
+  },
+  "files": [
+    "index.js",
+    "bin"
+  ],
+  "scripts": {
+    "build": "echo 'Build script placeholder'",
+    "test": "echo 'Tests coming soon'"
+  },
+  "keywords": [
+    "authentication",
+    "testing",
+    "automation",
+    "e2e",
+    "session",
+    "auth"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hiccup-za/Project-Key.git"
+  }
+}
