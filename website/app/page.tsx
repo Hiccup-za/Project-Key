@@ -1,11 +1,33 @@
 'use client';
 
 export default function Home() {
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Project Key',
+    applicationCategory: 'DeveloperApplication',
+    description: 'Universal authentication orchestrator for test automation frameworks',
+    operatingSystem: 'Any',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+    author: {
+      '@type': 'Organization',
+      name: 'Project Key',
+    },
+    keywords: 'authentication, testing, automation, e2e, playwright, cypress, puppeteer',
+  };
 
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <header style={{ padding: '1.5rem 0', position: 'sticky', top: 0, background: 'rgba(10, 10, 10, 0.8)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', zIndex: 10 }}>
-        <nav style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <nav aria-label="Main navigation" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ fontSize: '1.25rem', fontWeight: '500', letterSpacing: '-0.02em' }}>🔑 Project Key</div>
           <div style={{ display: 'flex', gap: '2.5rem', fontSize: '0.9rem' }}>
             {/* <a href="#docs">Docs</a>
