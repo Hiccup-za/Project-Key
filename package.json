@@ -1,0 +1,19 @@
+{
+  "name": "project-key",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "website",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  },
+  "packageManager": "bun@1.0.0"
+}

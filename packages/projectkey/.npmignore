@@ -1,0 +1,15 @@
+node_modules
+*.log
+.DS_Store
+.env
+.env.local
+tsconfig.json
+tsconfig.*.json
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+test
+tests
+__tests__
+
